@@ -10,6 +10,10 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://hardylab.github.io/stackauditor/" />
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<!-- Plausible Analytics: pageviews + outbound-link tracking + custom events (free tier).
+     Replace data-domain after registering https://plausible.io on the host. Until then the script is a no-op. -->
+<script defer data-domain="hardylab.github.io" src="https://plausible.io/js/script.outbound-links.js"></script>
+<script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
   tailwind.config = {
@@ -141,9 +145,19 @@
   <div class="mx-auto w-full max-w-5xl px-6 text-center">
     <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Be first when we open the doors</h2>
     <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-300">We are in private beta. Drop your email and we will send you a free audit plus early access.</p>
-    <form class="mt-10 mx-auto flex max-w-md items-center justify-center gap-2" action="https://formspree.io/f/REPLACE_ME" method="POST">
-      <input type="email" name="email" required placeholder="you@company.com" class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-3 text-base text-white placeholder:text-slate-500 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
-      <button type="submit" class="rounded-md bg-brand-500 px-5 py-3 text-base font-semibold text-white hover:bg-brand-600">Join waitlist</button>
+    <form data-waitlist class="mt-10 mx-auto max-w-md" action="https://formspree.io/f/REPLACE_ME" method="POST">
+      <div data-waitlist-form class="flex items-center justify-center gap-2">
+        <input type="email" name="email" required placeholder="you@company.com" class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-3 text-base text-white placeholder:text-slate-500 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
+        <button type="submit" class="rounded-md bg-brand-500 px-5 py-3 text-base font-semibold text-white hover:bg-brand-600">Join waitlist</button>
+      </div>
+      <input type="hidden" name="utm_source" value="" />
+      <input type="hidden" name="utm_medium" value="" />
+      <input type="hidden" name="utm_campaign" value="" />
+      <input type="hidden" name="utm_content" value="" />
+      <div data-waitlist-success style="display:none" class="mt-4 rounded-md border border-brand-400 bg-slate-800 p-4">
+        <p class="font-semibold text-white">Thanks! You're on the list.</p>
+        <p class="mt-1 text-sm text-slate-300">We'll email you when we open the doors. (Until Formspree is wired, this is a UI confirmation only.)</p>
+      </div>
     </form>
     <p class="mt-4 text-sm text-slate-400">No spam. One email when we launch, one when your audit is ready.</p>
   </div>
@@ -153,11 +167,80 @@
   <div class="mx-auto w-full max-w-5xl px-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
     <p class="text-sm text-slate-500">(c) 2026 StackAuditor. Built by a one-person company.</p>
     <div class="flex items-center gap-6 text-sm text-slate-500">
+      <a href="marketing/seo-hub/p/saas-spend-audit/" class="hover:text-slate-900">SaaS spend audit guide</a>
       <a href="#" class="hover:text-slate-900">Privacy</a>
       <a href="#" class="hover:text-slate-900">Terms</a>
       <a href="https://github.com/hardylab/stackauditor" class="hover:text-slate-900">GitHub</a>
     </div>
   </div>
 </footer>
+
+<!-- UTM capture + waitlist submit handler (path a: sessionStorage + Plausible event, no server).
+     Reads ?utm_* from URL on load, mirrors into sessionStorage, populates hidden form fields, and
+     fires plausible('waitlist_submission', {props}) with utm_* as custom properties before showing
+     an inline success state. Form action is intercepted until Formspree is wired. -->
+<script>
+(function () {
+  var PARAMS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
+
+  function captureParams() {
+    var url = new URL(window.location.href);
+    PARAMS.forEach(function (p) {
+      var v = url.searchParams.get(p);
+      if (v) {
+        try { sessionStorage.setItem(p, v); } catch (e) { /* private mode */ }
+      }
+    });
+  }
+
+  function syncHiddenFields(form) {
+    PARAMS.forEach(function (p) {
+      var input = form.querySelector('input[name="' + p + '"]');
+      if (!input) return;
+      try {
+        var stored = sessionStorage.getItem(p);
+        if (stored) input.value = stored;
+      } catch (e) { /* ignore */ }
+    });
+  }
+
+  function attach() {
+    var form = document.querySelector('form[data-waitlist]');
+    if (!form) return;
+    syncHiddenFields(form);
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      syncHiddenFields(form);
+
+      var props = {};
+      PARAMS.forEach(function (p) {
+        try {
+          var v = sessionStorage.getItem(p);
+          if (v) props[p] = v;
+        } catch (err) { /* ignore */ }
+      });
+
+      // Fire Plausible custom event. The dashboard surfaces this as the
+      // 'waitlist_submission' goal once Hardy configures it under Settings → Goals.
+      if (typeof window.plausible === 'function') {
+        window.plausible('waitlist_submission', { props: props });
+      }
+
+      var formBox = form.querySelector('[data-waitlist-form]');
+      var success = form.querySelector('[data-waitlist-success]');
+      if (formBox) formBox.style.display = 'none';
+      if (success) success.style.display = 'block';
+    });
+  }
+
+  captureParams();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attach);
+  } else {
+    attach();
+  }
+})();
+</script>
 </body>
 </html>

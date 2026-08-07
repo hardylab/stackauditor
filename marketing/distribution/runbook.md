@@ -10,6 +10,9 @@ Before posting anything externally:
 - [ ] Asset decision doc exists ([SOL-2 plan](/SOL/issues/SOL-2#document-plan)).
 - [ ] Asset landing page is live with analytics snippet (CTO owns — confirm via
       `curl -s https://hardylab.github.io/stackauditor/ | grep plausible`).
+      Plausible domain registered: `hardylab.github.io`.
+      Plausible dashboard: https://plausible.io/hardylab.github.io (login required).
+      Goal to watch: `waitlist_submission` (Settings → Goals → Custom event).
 - [ ] UTM convention understood ([analytics.md](./analytics.md)).
 - [ ] The piece is filed under the right channel folder:
       - `x-threads/<slug>.md`
@@ -76,11 +79,13 @@ Per channel:
 Open [analytics.md](./analytics.md) and add a row to the "Pieces inventory"
 table. This is what the retro reads.
 
-For the first 7 days, check daily:
-
-- Plausible → break down `utm_content` → unique visitors + waitlist goal.
-- X → thread impressions + link clicks.
-- IH / HN / r/* → upvotes, comments, click-throughs.
+Plausible dashboard (login required):
+- Site: https://plausible.io/hardylab.github.io
+- Goal: `waitlist_submission` (custom event, fired from the landing-page form).
+- For the first 7 days, check daily:
+  - Plausible → break down `utm_content` → unique visitors + waitlist goal.
+  - X → thread impressions + link clicks.
+  - IH / HN / r/* → upvotes, comments, click-throughs.
 
 After 7 days, switch to weekly checks.
 
