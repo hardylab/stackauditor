@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>StackAuditor &mdash; 1-page SaaS spend audit in 60 seconds</title>
+<meta name="description" content="Upload a screenshot of your SaaS stack. Get a 1-page plain-language audit - wasted spend, redundant seats, unused features, security red flags - in under 60 seconds." />
+<meta property="og:title" content="StackAuditor - 1-page SaaS spend audit in 60 seconds" />
+<meta property="og:description" content="Stop bleeding SaaS dollars. Get a 1-page plain-language audit of your stack in 60 seconds." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://hardylab.github.io/stackauditor/" />
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            50: "#eef6ff",
+            100: "#d9eaff",
+            200: "#bcd9ff",
+            300: "#8ec0ff",
+            400: "#599cff",
+            500: "#2f78ff",
+            600: "#1a5ce0",
+            700: "#1649b3",
+            800: "#163f8c",
+            900: "#163672",
+          },
+        },
+      },
+    },
+  };
+</script>
+<style>
+  html { color-scheme: light; }
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+</style>
+</head>
+<body class="min-h-screen bg-white text-slate-900 antialiased">
+<header class="border-b border-slate-200 bg-white">
+  <div class="mx-auto w-full max-w-5xl px-6 flex items-center justify-between py-5">
+    <div class="flex items-center gap-2">
+      <div class="grid h-8 w-8 place-items-center bg-brand-600 text-white font-bold rounded-md">S</div>
+      <span class="font-semibold tracking-tight text-slate-900">StackAuditor</span>
+    </div>
+    <nav class="flex items-center gap-6 text-sm text-slate-600">
+      <a href="#how" class="hover:text-slate-900">How it works</a>
+      <a href="#pricing" class="hover:text-slate-900">Pricing</a>
+      <a href="#waitlist" class="rounded-md bg-slate-900 px-3 py-2 text-white hover:bg-slate-800">Join waitlist</a>
+    </nav>
+  </div>
+</header>
+
+<section class="mx-auto w-full max-w-5xl px-6 py-24 sm:py-32">
+  <div class="mx-auto max-w-3xl text-center">
+    <p class="text-sm font-medium uppercase tracking-wider text-brand-700">One audit. One page. Sixty seconds.</p>
+    <h1 class="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl">Stop bleeding SaaS dollars.</h1>
+    <p class="mt-6 text-lg leading-8 text-slate-600">
+      Upload a screenshot of your SaaS stack. Get a 1-page plain-language audit &mdash;
+      wasted spend, redundant seats, unused features, security red flags &mdash;
+      in under 60 seconds. No login required for your first audit.
+    </p>
+    <div class="mt-10 flex items-center justify-center gap-4">
+      <a href="#waitlist" class="rounded-md bg-brand-600 px-5 py-3 text-base font-semibold text-white shadow-sm hover:bg-brand-700">Try your first audit free</a>
+      <a href="#how" class="rounded-md border border-slate-300 bg-white px-5 py-3 text-base font-semibold text-slate-700 hover:bg-slate-50">See how it works</a>
+    </div>
+    <p class="mt-4 text-sm text-slate-500">Built for solo consultants, fractional operators, and 1-5 person agencies.</p>
+  </div>
+</section>
+
+<section id="how" class="border-t border-slate-200 bg-slate-50 py-20">
+  <div class="mx-auto w-full max-w-5xl px-6">
+    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">How it works</h2>
+    <p class="mt-4 max-w-2xl text-lg text-slate-600">Three steps. No spreadsheets, no login, no 40-minute demo call.</p>
+    <div class="mt-12 grid gap-8 sm:grid-cols-3">
+      <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex h-10 w-10 items-center justify-center rounded-md bg-brand-50 text-brand-700 font-bold">1</div>
+        <h3 class="mt-4 text-lg font-semibold text-slate-900">Screenshot your stack</h3>
+        <p class="mt-2 text-sm text-slate-600">Grab a screenshot or PDF of your SaaS dashboard (Stripe, Notion, Linear, whatever you run). One file, max 10 MB.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex h-10 w-10 items-center justify-center rounded-md bg-brand-50 text-brand-700 font-bold">2</div>
+        <h3 class="mt-4 text-lg font-semibold text-slate-900">AI runs the audit</h3>
+        <p class="mt-2 text-sm text-slate-600">Vision model reads your tools and pricing, then a plain-language audit is generated in under 60 seconds.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex h-10 w-10 items-center justify-center rounded-md bg-brand-50 text-brand-700 font-bold">3</div>
+        <h3 class="mt-4 text-lg font-semibold text-slate-900">Read your 1-pager</h3>
+        <p class="mt-2 text-sm text-slate-600">Wasted spend, redundant seats, unused features, and security red flags &mdash; delivered as a PDF and on-screen, ready to act on in 15 minutes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="py-20">
+  <div class="mx-auto w-full max-w-5xl px-6">
+    <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Pricing</h2>
+    <p class="mt-4 max-w-2xl text-lg text-slate-600">Free first audit, no card. Pay once for a deep one-time audit, or subscribe for monthly re-audits and alerts.</p>
+    <div class="mt-12 grid gap-8 sm:grid-cols-3">
+      <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <h3 class="text-lg font-semibold text-slate-900">Free</h3>
+        <p class="mt-1 text-sm text-slate-600">One free audit, no card.</p>
+        <p class="mt-4 text-4xl font-bold text-slate-900">$0</p>
+        <ul class="mt-4 space-y-2 text-sm text-slate-700">
+          <li class="flex items-start gap-2"><span class="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-brand-500"></span><span>1 audit / month</span></li>
+          <li class="flex items-start gap-2"><span class="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-brand-500"></span><span>On-screen report</span></li>
+          <li class="flex items-start gap-2"><span class="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-brand-500"></span><span>Plain-language summary</span></li>
+        </ul>
+        <a href="#waitlist" class="mt-6 inline-block w-full rounded-md px-4 py-2 text-center text-sm font-semibold border border-slate-300 bg-white text-slate-800 hover:bg-slate-50">Start free</a>
+      </div>
+      <div class="rounded-lg border p-6 shadow-sm border-brand-500 bg-brand-50 ring-1 ring-brand-500">
+        <h3 class="text-lg font-semibold text-slate-900">One-time</h3>
+        <p class="mt-1 text-sm text-slate-600">Pay once. Keep the PDF.</p>
+        <p class="mt-4 text-4xl font-bold text-slate-900">$19</p>
+        <ul class="mt-4 space-y-2 text-sm text-slate-700">
+          <li class="flex items-start gap-2"><span class="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-brand-500"></span><span>1 deep audit</span></li>
+          <li class="flex items-start gap-2"><span class="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-brand-500"></span><span>PDF export</span></li>
+          <li class="flex items-start gap-2"><span class="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-brand-500"></span><span>Email delivery</span></li>
+          <li class="flex items-start gap-2"><span class="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-brand-500"></span><span>Priority queue</span></li>
+        </ul>
+        <a href="#waitlist" class="mt-6 inline-block w-full rounded-md px-4 py-2 text-center text-sm font-semibold bg-brand-600 text-white hover:bg-brand-700">Buy one audit</a>
+      </div>
+      <div class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+        <h3 class="text-lg font-semibold text-slate-900">Pro</h3>
+        <p class="mt-1 text-sm text-slate-600">Monthly re-audit + alerts.</p>
+        <p class="mt-4 text-4xl font-bold text-slate-900">$9/mo</p>
+        <ul class="mt-4 space-y-2 text-sm text-slate-700">
+          <li class="flex items-start gap-2"><span class="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-brand-500"></span><span>Monthly re-audit</span></li>
+          <li class="flex items-start gap-2"><span class="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-brand-500"></span><span>Spend alerts</span></li>
+          <li class="flex items-start gap-2"><span class="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-brand-500"></span><span>Cancel anytime</span></li>
+        </ul>
+        <a href="#waitlist" class="mt-6 inline-block w-full rounded-md px-4 py-2 text-center text-sm font-semibold border border-slate-300 bg-white text-slate-800 hover:bg-slate-50">Subscribe</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="waitlist" class="border-t border-slate-200 bg-slate-900 py-20 text-white">
+  <div class="mx-auto w-full max-w-5xl px-6 text-center">
+    <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Be first when we open the doors</h2>
+    <p class="mt-4 max-w-2xl mx-auto text-lg text-slate-300">We are in private beta. Drop your email and we will send you a free audit plus early access.</p>
+    <form class="mt-10 mx-auto flex max-w-md items-center justify-center gap-2" action="https://formspree.io/f/REPLACE_ME" method="POST">
+      <input type="email" name="email" required placeholder="you@company.com" class="w-full rounded-md border border-slate-700 bg-slate-800 px-3 py-3 text-base text-white placeholder:text-slate-500 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500" />
+      <button type="submit" class="rounded-md bg-brand-500 px-5 py-3 text-base font-semibold text-white hover:bg-brand-600">Join waitlist</button>
+    </form>
+    <p class="mt-4 text-sm text-slate-400">No spam. One email when we launch, one when your audit is ready.</p>
+  </div>
+</section>
+
+<footer class="border-t border-slate-200 bg-white py-10">
+  <div class="mx-auto w-full max-w-5xl px-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
+    <p class="text-sm text-slate-500">(c) 2026 StackAuditor. Built by a one-person company.</p>
+    <div class="flex items-center gap-6 text-sm text-slate-500">
+      <a href="#" class="hover:text-slate-900">Privacy</a>
+      <a href="#" class="hover:text-slate-900">Terms</a>
+      <a href="https://github.com/hardylab/stackauditor" class="hover:text-slate-900">GitHub</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "stackauditor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "StackAuditor - 1-page plain-language SaaS spend audit in 60 seconds",
+  "scripts": {
+    "test": "node scripts/smoke.mjs"
+  }
+}
