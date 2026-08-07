@@ -1,0 +1,177 @@
+---
+title: "How to audit your SaaS stack in one afternoon (and stop the bleed)"
+slug: saas-spend-audit
+description: "A practical playbook for solo founders and small agencies to find wasted SaaS spend, redundant seats, and security red flags in a single afternoon."
+publishedAt: 2026-08-07
+updatedAt: 2026-08-07
+channel: seo
+utm_content: saas-spend-audit
+target_url: https://hardylab.github.io/stackauditor/?utm_source=seo&utm_medium=pillar-page&utm_campaign=stackauditor&utm_content=saas-spend-audit
+keywords:
+  - saas spend audit
+  - saas stack audit
+  - saas subscription audit
+  - how to audit saas stack
+  - saas cost optimization
+related:
+  - solo-consultant-saas-audit
+---
+
+# How to audit your SaaS stack in one afternoon (and stop the bleed)
+
+Your SaaS stack has 27 tools. Three of them are CRMs. Twelve seats of one product have not logged in for ninety days. The renewal lands in two weeks and you have no idea whether the contract is still worth it.
+
+You are not alone. The average 5–10 person agency runs 27 SaaS tools. The average solo consultancy runs 19. Nobody has time to audit them, and the people who sell "SaaS spend management" platforms (Zylo, Productiv, Torii) want a Salesforce integration and a 30-day implementation — which is the wrong shape for a one-person operator.
+
+This pillar is the one-afternoon playbook for finding the waste, killing the duplicates, and pricing the keep-list fairly. It is written for solo founders, fractional operators, and 1–5 person agencies who would rather have an answer in 60 seconds than a vendor-demo in 60 days.
+
+By the end of this page you will have:
+
+- A short list of tools you almost certainly do not need.
+- A short list of tools that are pulling their weight.
+- A one-page audit you can hand to a client, a co-founder, or your future self at renewal time.
+
+If you want the spreadsheet, skip to the end. If you want the 1-page audit that fills the spreadsheet in for you, the link is at the bottom.
+
+## What the problem actually is
+
+"SaaS sprawl" is not a moral failing. It is a side effect of three things that are true for almost every operator who is shipping client work or running a small team in 2026.
+
+### SaaS subscription waste — the invisible line item
+
+The single most common line item in a wasted SaaS audit is the seat that nobody is using. Not the seat someone uses once a week — that one you can defend. The seat that has been dormant for 60–180 days, where the account still bills, where the contract auto-renews in 90 days, and where the only human who notices is the operations person who notices everything.
+
+Most operators do not catch these because:
+
+- The seat shows up under a "tools" budget line, not a headcount line, so the operations person attributes it to software spend rather than payroll waste.
+- The seat was set up for a contractor who left six months ago and the offboarding flow did not include "remove from SaaS".
+- The seat is on annual plan, so cancelling it now forfeits two months of prepaid spend — which feels worse than letting it ride, until you multiply the dormant seat by the months it will sit unused before renewal.
+
+The fix is not "cancel everything". The fix is to know exactly which seats are dormant and which are essential before you touch the cancellation flow.
+
+### Redundant SaaS seats — when two products do one job
+
+The second biggest line item is redundancy. You have three tools that do project management. You have two CRMs because one of them was free and the other one came with the consultant bundle. You have two password managers because the teams last hire had a preference.
+
+The question is not "which one is best". The question is "which one actually fits the workflow that the team is using today". Most operators default to "the one with the most features", which is the wrong default — feature count and team fit are different things.
+
+### Shadow SaaS and unsanctioned SaaS
+
+The third line item is the one nobody flags because nobody knows it exists. Someone on the team bought a $19/mo scheduling tool on their personal card because they could not get IT approval in time for a client deadline. Two people on the team now use it. One of them leaves and the subscription keeps billing to a card that no longer exists.
+
+Shadow SaaS is rarely fraud and rarely malicious. It is almost always a team that needed a tool and could not get one through procurement. The fix is not a tighter approval process — the fix is to know which tools are running, so you can decide whether to bring them in-house or let them go.
+
+## How to solve it (three approaches)
+
+There are three honest ways to do a SaaS stack audit. Pick the one that matches your time budget and the size of your team.
+
+
+### DIY — the manual spreadsheet
+
+Cost: $0 in software. Time: half a day to a full day. Best for: solo operators with fewer than 12 SaaS tools and a finance habit already.
+
+The DIY approach is a single spreadsheet with one row per tool and these columns:
+
+- **Tool name** (the brand, not the product line).
+- **Annual cost** (per seat × seats × months billed per year).
+- **Active users last 30 days** (from each tool's admin console).
+- **Active users last 90 days**.
+- **Renewal date** (from the contract, not the invoice — invoices lag).
+- **Owner** (the human who decided to buy it).
+- **Replaces** (if it duplicates another tool, write the name).
+- **Action** (keep / cut / migrate / renegotiate).
+
+Walk every line item in your credit card statement, bank ACH history, and any prepaid annual contracts. Pull "active users" from each tool's admin panel. Sort by annual cost descending. The top 5 line items are 70–80% of your wasted spend, by dollar.
+
+This works. It is also the reason most operators never finish it — the last 20% of the list is tedious, and the data you need (active users) is spread across 12 admin panels.
+
+### Hire someone — fractional operations
+
+Cost: $75–$200/hr for a fractional operations consultant, or $1,500–$3,000 for a fixed-scope audit. Time: 1–2 weeks including your review. Best for: agencies with 8+ SaaS tools and a real finance function.
+
+A fractional ops consultant will run the DIY approach for you, with a faster feedback loop (they have done this 30 times) and a deliverable that is a 1-page PDF instead of a spreadsheet. The downside is the calendar cost — most operators cannot afford to wait two weeks for an audit at the exact moment their renewal lands.
+
+### Use StackAuditor — the screenshot-to-audit tool
+
+Cost: free first audit, $19 per subsequent audit, $9/mo Pro tier for monthly re-audit + alerts. Time: under 60 seconds per audit. Best for: solo operators who need an answer today and do not want to maintain a spreadsheet.
+
+Upload a PNG or PDF of any SaaS dashboard (Slack admin, Google Workspace, Notion, Stripe — anything). The tool returns a structured 1-page audit:
+
+- Wasted spend (dormant seats, redundant tools, annual plans that should be monthly).
+- Redundant seats (tools that overlap with another tool in your stack).
+- Unused features (the tools where you are paying for tier-X features your team has never touched).
+- Top security red flags (shared admin accounts, missing 2FA, stale API keys).
+
+Every flagged item comes with a one-sentence "why it matters" and a one-click next step. The audit lands in your inbox as a clean PDF you can forward to a client or co-founder.
+
+It does not require a Salesforce integration. It does not require a 30-day implementation. It does not require you to enter your credit card for the first one.
+
+The honest limitation is that screenshot OCR is best-effort. Very small fonts, custom dashboards, or non-English UIs may be missed — the tool flags low-confidence reads and asks you to label tools manually. It is also informational, not advice — financial and security findings come with an explicit "not a substitute for a human auditor, lawyer, or accountant" disclaimer in the PDF.
+
+## StackAuditor in detail
+
+### Features
+
+| Capability                         | What it does                                                                                  |
+| ---------------------------------- | --------------------------------------------------------------------------------------------- |
+| Instant screenshot-to-audit        | Drop a PNG or PDF of any SaaS dashboard, structured 1-page report back in under 60s.          |
+| Plain-language findings            | Every flagged item comes with a one-sentence "why it matters" and a one-click action.         |
+| Email-delivered PDF                | The audit lands in your inbox as a clean PDF you can forward to a client or co-founder.        |
+| Plain-language disclaimer          | Informational, not advice. The disclaimer is in every PDF, not buried in the footer.          |
+| Confidence flagging on OCR         | Low-confidence reads are flagged, not silently included — you can correct them and re-run.     |
+
+
+### Pricing
+
+- **Free first audit.** No card. No signup beyond an email.
+- **One-time audit.** $19 per audit, billed once. Use it once a quarter at renewal time.
+- **Pro tier.** $9/mo for monthly re-audit + alerts when a seat goes dormant. Billed monthly, no annual lock-in.
+
+### What it does NOT do
+
+- It does not integrate with your bank or credit card to pull spend automatically. That is the Zylo / Productiv / Torii lane, and it is the wrong shape for a solo operator.
+- It does not negotiate your contracts or cancel services on your behalf.
+- It does not replace a human auditor, lawyer, or accountant. Financial and security findings are guidance, not advice.
+- It does not yet support live (non-screenshot) data sources — that is on the roadmap after Pro tier ships.
+
+## FAQ
+
+### How long does a SaaS stack audit take?
+
+DIY, half a day to a full day for 12–25 tools. With a fractional operations consultant, 1–2 weeks including your review. With StackAuditor, under 60 seconds for the audit itself, plus 15 minutes to upload the screenshots and review the flagged items.
+
+### What does a SaaS spend audit cost?
+
+DIY is $0 in software plus your time. A fractional ops consultant is $1,500–$3,000. StackAuditor is free for the first audit, $19 per subsequent one-time audit, or $9/mo for the Pro tier with monthly re-audit.
+
+### Can I audit SaaS subscriptions without admin access to every tool?
+
+For the DIY approach, no — you need admin access to pull "active users" data from each tool's console. For StackAuditor, you need read-only access to a screenshot or PDF of each tool's admin panel, which a finance person or operations lead can usually produce without engineering help.
+
+### What is the fastest way to find redundant SaaS seats?
+
+Pull the "active users last 90 days" number from every tool's admin panel, sort tools by annual cost, and look for the line items where the seat count and the active user count differ by more than 30%. Those are the dormant-seat candidates. StackAuditor surfaces the same number in the "wasted spend" section of the audit PDF.
+
+### Is there a free SaaS stack audit tool?
+
+Yes — StackAuditor first audit is free, no card. The DIY approach is also free if your time is free. The paid SaaS spend-management tools (Zylo, Productiv, Torii) are not free and they target the enterprise segment, not solo operators.
+
+### How often should I audit my SaaS subscriptions?
+
+Quarterly, aligned to your renewal cycle. The Pro tier of StackAuditor runs monthly and alerts you when a seat goes dormant, which is the only reason to pay monthly instead of once a quarter.
+
+### What is the difference between a SaaS audit and SaaS spend management?
+
+A SaaS audit answers "what are we paying for and what is it actually doing". SaaS spend management answers "how do we control new subscriptions going forward". The audit is the diagnostic. The spend management is the policy. Most solo operators need the audit and can skip the policy; the spreadsheet is the policy.
+
+## Conclusion
+
+A SaaS stack audit is one of the highest-leverage exercises a solo operator can run. The output is a short list of cuts, a short list of keeps, and a one-page PDF you can hand to a client or co-founder. The fastest path from "we probably waste money on SaaS" to "here is the exact dollar amount and what to do about it" is to spend one afternoon on the spreadsheet, or sixty seconds on a screenshot-to-audit tool.
+
+If you want the audit that fills in the spreadsheet for you, the first one is free and takes under a minute.
+
+[Run the free SaaS audit](https://hardylab.github.io/stackauditor/?utm_source=seo&utm_medium=pillar-page&utm_campaign=stackauditor&utm_content=saas-spend-audit)
+
+### Related reading
+
+- [The solo-consultant SaaS audit checklist](/marketing/seo-hub/p/solo-consultant-saas-audit/index.html) — a 12-step pre-audit checklist built for fractional operators and 1–5 person agencies.

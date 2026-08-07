@@ -1,0 +1,39 @@
+---
+const { title, description } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="icon" href="/marketing/seo-hub/favicon.svg" type="image/svg+xml" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: { colors: { brand: { 50: "#eef6ff", 100: "#d9eaff", 200: "#bcd9ff", 300: "#8ec0ff", 400: "#599cff", 500: "#2f78ff", 600: "#1a5ce0", 700: "#1649b3", 800: "#163f8c", 900: "#163672" } } } } };
+</script>
+<style>html { color-scheme: light; } body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }</style>
+</head>
+<body class="min-h-screen bg-white text-slate-900 antialiased">
+<header class="border-b border-slate-200 bg-white">
+  <div class="mx-auto w-full max-w-5xl px-6 flex items-center justify-between py-5">
+    <a href="/marketing/seo-hub/" class="flex items-center gap-2">
+      <div class="grid h-8 w-8 place-items-center bg-brand-600 text-white font-bold rounded-md">S</div>
+      <span class="font-semibold tracking-tight text-slate-900">StackAuditor</span>
+    </a>
+    <nav class="flex items-center gap-6 text-sm text-slate-600">
+      <a href="https://hardylab.github.io/stackauditor/" class="hover:text-slate-900">Home</a>
+      <a href="/marketing/seo-hub/p/saas-spend-audit/" class="hover:text-slate-900">SaaS audit guide</a>
+    </nav>
+  </div>
+</header>
+<slot />
+<footer class="border-t border-slate-200 bg-slate-50 mt-16">
+  <div class="mx-auto w-full max-w-3xl px-6 py-8 text-sm text-slate-600">
+    <p>StackAuditor — 1-page plain-language SaaS spend audit in 60 seconds. <a href="https://hardylab.github.io/stackauditor/" class="text-brand-700 underline">Back to the landing page</a>.</p>
+    <p class="mt-2 text-xs">Informational, not advice. Not a substitute for a human auditor, lawyer, or accountant.</p>
+  </div>
+</footer>
+</body>
+</html>
