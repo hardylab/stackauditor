@@ -62,6 +62,8 @@ into followers or signups.
 | r/SideProject cross-post (3-7d later)       | Reddit  | `r-sideproject-2026-08-07`     |
 | SEO pillar: SaaS spend audit                | SEO     | `saas-spend-audit`             |
 | SEO related post: solo-consultant stack     | SEO     | `solo-consultant-saas-audit`   |
+| SEO pillar: Hidden SaaS costs (10-min triage) | SEO   | `hidden-saas-costs`            |
+| SEO pillar: SaaS subscription creep         | SEO     | `saas-subscription-creep`      |
 
 All of these live as files under `/marketing/distribution/`. The CMO retro
 re-reads this table, plugs in 7-day numbers, and posts on [SOL-5](/SOL/issues/SOL-5).

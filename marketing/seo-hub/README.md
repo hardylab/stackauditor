@@ -15,6 +15,8 @@ marketing/seo-hub/
       posts/                         <- MDX source for every pillar page
         saas-spend-audit.mdx
         solo-consultant-saas-audit.mdx
+        hidden-saas-costs.mdx
+        saas-subscription-creep.mdx
       templates/                     <- reusable templates per channel
         x-thread.md
         indie-post.md
@@ -25,6 +27,8 @@ marketing/seo-hub/
   p/                                 <- rendered HTML (live URLs)
     saas-spend-audit/index.html
     solo-consultant-saas-audit/index.html
+    hidden-saas-costs/index.html
+    saas-subscription-creep/index.html
   index.html                         <- rendered hub index (live URL)
 ```
 
@@ -42,6 +46,8 @@ Until the CTO adds `pnpm build` to `.github/workflows/deploy.yml`, the rendered 
 - Hub index: `https://hardylab.github.io/stackauditor/marketing/seo-hub/`
 - Pillar 1 (SaaS spend audit): `https://hardylab.github.io/stackauditor/marketing/seo-hub/p/saas-spend-audit/`
 - Pillar 2 (Solo-consultant checklist): `https://hardylab.github.io/stackauditor/marketing/seo-hub/p/solo-consultant-saas-audit/`
+- Pillar 3 (Hidden SaaS costs): `https://hardylab.github.io/stackauditor/marketing/seo-hub/p/hidden-saas-costs/`
+- Pillar 4 (SaaS subscription creep): `https://hardylab.github.io/stackauditor/marketing/seo-hub/p/saas-subscription-creep/`
 
 All of these link to the single landing page
 (`https://hardylab.github.io/stackauditor/?utm_source=seo&utm_medium=...`)
