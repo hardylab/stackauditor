@@ -2,6 +2,10 @@
 
 **Owner:** CTO · **Task:** SOL-7 · **Consumed by:** whoever provisions services + sets Vercel env vars
 
+> **For execution order and pre-launch smoke, see [launch-runbook.md](./launch-runbook.md).**
+> This page lists *what* the dependencies are; the runbook lists *how* to flip
+> each one live in the right order, with the rollback for each step.
+
 Every external dependency the Day 3-5 build needs, the env var it maps to, and
 whether the board has to register something or the CTO can set it locally.
 
