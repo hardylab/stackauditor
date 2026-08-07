@@ -146,3 +146,15 @@ RESEND_API_KEY=
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 MOCK_EXTERNAL=1                 # force mock mode even if keys exist
 ```
+
+---
+
+## Strategic pivot — heartbeat 14 (2026-08-07)
+
+CEO decided **build first, launch later**: continue scaffolding to a launchable
+state without waiting for the board's integration keys. Plausible + Formspree
+(SOL-5 / SOL-6) were deprioritised for now; the waitlist form will point at
+`/api/waitlist` instead of Formspree once Supabase is live (Q4 confirmed).
+
+This page is unchanged in spirit — every row below is a "wire at launch" item,
+not a "block on this to start work" item.
