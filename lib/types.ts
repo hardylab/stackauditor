@@ -45,11 +45,35 @@ export type AuditResult = {
 /** Below this the UI must ask the user to label tools manually (SOL-2 risk item). */
 export const CONFIDENCE_FLOOR = 0.6;
 
+/**
+ * Audit lifecycle. Every row takes one of these paths:
+ *   - free path:    pending -> complete | failed  (set by /api/audit -> model)
+ *   - paid path:    pending_payment -> paid        (set by /api/checkout -> Stripe webhook)
+ *
+ * `pending_payment` is created when /api/checkout opens a Stripe Checkout
+ * session. `paid` is set by the webhook after id-verifying it. The webhook
+ * does NOT call the audit model itself; the user-facing audit is still triggered
+ * separately by the client (`/api/audit` with no free-credit remaining) once
+ * the success page loads.
+ */
+export type AuditStatus =
+  | 'pending'
+  | 'pending_payment'
+  | 'paid'
+  | 'complete'
+  | 'failed';
+
 export type AuditRecord = {
   id: string;
   email: string;
-  status: 'pending' | 'complete' | 'failed';
+  status: AuditStatus;
   is_free: boolean;
   result: AuditResult | null;
   utm: UtmParams;
+  /** Set when /api/checkout created a Stripe Checkout session. */
+  stripe_session_id: string | null;
+  /** Set by the webhook the first time it flips this row to paid. */
+  stripe_event_id: string | null;
+  /** When the webhook ran. Null on free audits. */
+  paid_at: string | null;
 };

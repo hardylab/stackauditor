@@ -16,12 +16,23 @@
 //   - /api/audit:   first call is free + mocked=true, second hits 402 paywall,
 //                   a new email gets its own free audit, unknown uploadId is 404,
 //                   detected_tools + findings have valid schema
-//   - /api/checkout: one-time + pro plans priced correctly, stubbed=true
+//   - /api/checkout: one-time + pro plans priced correctly, stubbed=true,
+//                   seeds a pending_payment audit + returns its id as
+//                   client_reference_id (the join key for the webhook)
+//   - /api/webhooks/stripe: rejects malformed bodies, accepts a Stripe-shaped
+//                   mock event in mock mode and flips the matching audit row
+//                   from pending_payment -> paid, replays the same event id
+//                   and reports already_processed (idempotency)
 //
 // Not covered (by design):
-//   - Stripe webhook signature verification (Step 4 -- needs signed payload)
+//   - Stripe webhook signature verification (live mode needs a signed payload)
 //   - Real Anthropic model output (Step 2 -- mock fixture is a contract test)
 //   - Supabase RLS policies (Step 1 -- route uses service role)
+//
+// Webhook (Step 4) is partially covered: in mock mode the route accepts
+// unsigned events with a Stripe-shaped JSON body, so we exercise the
+// idempotency gate + the audit-row flip end-to-end. The signature path is
+// gated behind real keys and is only smoke-tested via the launch runbook.
 
 import { spawn } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
@@ -249,6 +260,99 @@ async function run() {
 
   const cBad = await post('/api/checkout', { email: emailA, plan: 'enterprise' });
   if (cBad.status === 400) ok('checkout', 'rejects unknown plan'); else bad('checkout', 'rejects unknown plan', cBad);
+
+  // --- checkout seeds pending_payment audit ---
+  const cPaid = await post('/api/checkout', {
+    email: emailA,
+    plan: 'one_time',
+    utm_source: 'preflight',
+  });
+  if (cPaid.json?.auditId) ok('checkout', 'seeds pending_payment audit row')
+    else bad('checkout', 'seeds pending_payment audit row', cPaid);
+  if (typeof cPaid.json?.clientReferenceId === 'string' && cPaid.json.clientReferenceId.length > 0)
+    ok('checkout', 'response carries clientReferenceId')
+    else bad('checkout', 'response carries clientReferenceId', cPaid.json);
+
+  // --- webhook ---
+  console.log('');
+  console.log('== /api/webhooks/stripe ==');
+
+  // Malformed JSON body -> 400. The route refuses to parse unsigned garbage
+  // and stamps it as a bad signature / shape.
+  const whMalformed = await fetch(BASE + '/api/webhooks/stripe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: 'this-is-not-json',
+  });
+  if (whMalformed.status === 400) ok('webhook', 'rejects malformed JSON body with 400')
+    else bad('webhook', 'rejects malformed JSON body with 400', { status: whMalformed.status });
+
+  // Hand-rolled event matching the audit we just created. /api/webhooks/stripe
+  // runs in mock mode (MOCK_EXTERNAL=1), so we don't need a Stripe signature;
+  // the route shape-validates and then joins by client_reference_id.
+  const eventId = 'evt_preflight_' + unique;
+  const whEvent = await fetch(BASE + '/api/webhooks/stripe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id: eventId,
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: cPaid.json.sessionId,
+          client_reference_id: cPaid.json.auditId,
+          customer_email: emailA,
+        },
+      },
+    }),
+  });
+  const whEventJson = await whEvent.json().catch(() => null);
+  if (whEvent.status === 200) ok('webhook', 'accepts valid mock event with 200')
+    else bad('webhook', 'accepts valid mock event with 200', { status: whEvent.status, json: whEventJson });
+  if (whEventJson?.auditId === cPaid.json.auditId) ok('webhook', 'first processing returns matching auditId')
+    else bad('webhook', 'first processing returns matching auditId', whEventJson);
+  if (whEventJson?.status === 'paid') ok('webhook', 'audit row flipped to paid')
+    else bad('webhook', 'audit row flipped to paid', whEventJson);
+
+  // Replay the same event id -> idempotency gate. The route short-circuits
+  // with already_processed: true; the audit row stays paid.
+  const whReplay = await fetch(BASE + '/api/webhooks/stripe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id: eventId,
+      type: 'checkout.session.completed',
+      data: {
+        object: {
+          id: cPaid.json.sessionId,
+          client_reference_id: cPaid.json.auditId,
+          customer_email: emailA,
+        },
+      },
+    }),
+  });
+  const whReplayJson = await whReplay.json().catch(() => null);
+  if (whReplay.status === 200 && whReplayJson?.already_processed === true)
+    ok('webhook', 'replay short-circuits with already_processed: true')
+    else bad('webhook', 'replay short-circuits with already_processed: true', { status: whReplay.status, json: whReplayJson });
+
+  // Event with no matching audit -> 200 + auditFound: false. The idempotency
+  // gate still records the event id so Stripe cannot retry-spam us, but the
+  // route does NOT mutate a row.
+  const whOrphanEventId = 'evt_preflight_orphan_' + unique;
+  const whOrphan = await fetch(BASE + '/api/webhooks/stripe', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id: whOrphanEventId,
+      type: 'checkout.session.completed',
+      data: { object: { id: 'cs_no_matching_audit', client_reference_id: null } },
+    }),
+  });
+  const whOrphanJson = await whOrphan.json().catch(() => null);
+  if (whOrphan.status === 200 && whOrphanJson?.auditFound === false)
+    ok('webhook', 'orphan event acknowledged with auditFound: false')
+    else bad('webhook', 'orphan event acknowledged with auditFound: false', { status: whOrphan.status, json: whOrphanJson });
 }
 
 let devProcess = null;
