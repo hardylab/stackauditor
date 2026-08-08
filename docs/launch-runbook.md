@@ -313,60 +313,93 @@ The Stripe account itself can stay; nothing destructive on the Stripe side.
 
 **Why last.** The webhook secret only exists **after** you register the endpoint, and you can only register an endpoint against a **stable URL** not a Vercel preview that changes per commit. By step 4, production is on its real domain.
 
-### 4.1 Board register the endpoint
+This step landed as part of [SOL-10](/SOL/issues/SOL-10). The route is at
+`app/api/webhooks/stripe/route.ts` and the schema lives in
+`supabase/migrations/0002_processed_webhook_events.sql` (extends the `audits`
+table with `stripe_event_id` / `stripe_session_id` / `paid_at` and adds the
+`pending_payment` and `paid` status values; creates a new
+`processed_webhook_events` table for the idempotency dedupe).
+
+### 4.1 Board apply migration 0002
+
+`[BOARD]` Open the Supabase **SQL editor** for this project and paste in the
+contents of `supabase/migrations/0002_processed_webhook_events.sql`. Run it.
+
+Expected:
+
+```
+Success. No rows returned
+```
+
+Then check that the new structure is there:
+
+```sql
+select column_name from information_schema.columns
+where table_name = 'audits' and column_name in ('stripe_event_id', 'stripe_session_id', 'paid_at');
+
+select enum_range(null::text); -- should now include 'pending_payment' and 'paid'
+
+select tablename from pg_tables where tablename = 'processed_webhook_events';
+```
+
+All three queries should return the expected rows. If `processed_webhook_events`
+is missing, the migration was rejected -- paste the error back here and we will
+fix and re-run.
+
+### 4.2 Board register the endpoint
 
 `[BOARD]` In Stripe **Developers Webhooks Add endpoint**:
 
-- **Endpoint URL:** `https://stackauditor.com/api/stripe-webhook` (note: the scaffold does **not** yet have this route; see Step 4.2 for the order of operations)
+- **Endpoint URL:** `https://stackauditor.com/api/webhooks/stripe`
 - **API version:** match what the Stripe SDK in `package.json` was built against. As of writing: `2024-06-20`.
 - **Events to send:**
   - `checkout.session.completed`
-  - `invoice.paid` (for Pro subscription renewals)
+
+> We deliberately do **not** subscribe to `invoice.paid` /
+> `customer.subscription.deleted` yet -- Pro-tier churn handling is a separate
+> SOL scoped after launch data shows churn is real. Adding them now would mean
+> the route 200s while doing nothing, which masks bugs.
 
 After creating the endpoint, click **Reveal** under **Signing secret** and copy the `whsec_...` value hand to CTO as `STRIPE_WEBHOOK_SECRET`.
 
-### 4.2 CTO add the webhook route
+### 4.3 CTO enable the live Checkout path
 
-`[CTO]` This step is non-trivial; it is the only piece of business logic the scaffold does not yet have. Out of scope for SOL-9 (which scopes itself to no live integrations); create a follow-up issue before launch if it does not exist already. For now, document the dependency in the launch issue tracker and defer.
+`[CTO]` In `app/api/checkout/route.ts` the live `stripe.checkout.sessions.create(...)` block is already written out (commented out). Do two things:
 
-**Minimal shape** (for the eventual PR):
+1. Delete the early `if (isMockMode.stripe) return Response.json(...stubbed...)` block.
+2. Uncomment the live Stripe call.
 
-```ts
-// app/api/stripe-webhook/route.ts
-import Stripe from 'stripe';
-import { env } from '@/lib/env';
-import { serviceClient } from '@/lib/supabase';
+The diff is roughly:
 
-export const runtime = 'nodejs';
-
-export async function POST(req: Request) {
-  const sig = req.headers.get('stripe-signature');
-  const body = await req.text();
-  const stripe = new Stripe(env.stripeSecretKey!);
-
-  let event: Stripe.Event;
-  try {
-    event = stripe.webhooks.constructEvent(body, sig!, env.stripeWebhookSecret!);
-  } catch (err) {
-    return new Response('bad signature', { status: 400 });
-  }
-
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session;
-    // mark the matching audit row: update public.audits
-    //   set is_free = false, paid_at = now(), stripe_session_id = session.id
-    //   where email = session.customer_email and status = 'pending'
-  }
-
-  return new Response('ok', { status: 200 });
-}
+```diff
+- if (isMockMode.stripe) {
+-   return Response.json({ checkoutUrl: ..., stubbed: true, ... });
+- }
++ if (isMockMode.stripe) {
++   return Response.json({ checkoutUrl: ..., stubbed: true, ... });
++ }
++
++ const stripe = new Stripe(env.stripeSecretKey!);
++ const session = await stripe.checkout.sessions.create({
++   mode: plan.mode,
++   customer_email: email,
++   client_reference_id: audit.id,       // join key for the webhook
++   metadata: { audit_id: audit.id },    // belt and braces
++   line_items: [{
++     price: planId === 'pro' ? env.stripePricePro! : env.stripePriceOneTime!,
++     quantity: 1,
++   }],
++   success_url: env.siteUrl + '/audit?session_id={CHECKOUT_SESSION_ID}',
++   cancel_url: env.siteUrl + '/#pricing',
++ });
++ return Response.json({ checkoutUrl: session.url, sessionId: session.id, clientReferenceId: audit.id, auditId: audit.id, stubbed: false });
 ```
 
-This is **not** the production code; it needs idempotency keys, audit row lookup by `client_reference_id` (which `/api/checkout` must now set), and a signed re-read of the upload. Treat as a real PR.
+The `audit` row in `pending_payment` is already created BEFORE the early return -- the new code can reference it directly.
 
-### 4.3 CTO set the webhook env var
+You will also need to import `Stripe` from the `stripe` package at the top of the file (already imported in `app/api/webhooks/stripe/route.ts`, copy that line). Commit on a branch, push, let Vercel deploy the preview, and verify there before promoting.
 
-Once the route exists and the board has registered the endpoint:
+### 4.4 CTO set the webhook env var
 
 `[CTO]` Vercel **Settings Environment Variables**:
 
@@ -374,9 +407,9 @@ Once the route exists and the board has registered the endpoint:
 STRIPE_WEBHOOK_SECRET = whsec-...
 ```
 
-Redeploy.
+Redeploy. Without this, the route returns 503 (board-config error, not bug).
 
-### 4.4 Smoke (Stripe CLI replay)
+### 4.5 Smoke (Stripe CLI replay)
 
 `[CTO]` Install the Stripe CLI on the build host:
 
@@ -384,34 +417,47 @@ Redeploy.
 brew install stripe/stripe-cli/stripe   # mac
 # or scoop install stripe                # windows
 stripe login
-stripe listen --forward-to https://stackauditor.com/api/stripe-webhook
+stripe listen --forward-to https://stackauditor.com/api/webhooks/stripe
 ```
 
-In a second terminal, replay a real-looking event:
+In a second terminal, replay a real-looking event against the `cs_live_...` session id you got from `/api/checkout`:
 
 ```bash
-stripe trigger checkout.session.completed
+# Replace cs_live_... with the real id from the checkout response (Step 3.6).
+stripe trigger checkout.session.completed --add checkout_session:cs_live_xxxxxxxx
 ```
 
 Expected:
 
-- The `stripe listen` terminal shows `200` returned from your endpoint.
-- A row in `public.audits` flips from `pending` to `complete` with `is_free=false`.
-- `scripts/preflight-check.mjs --base https://stackauditor.com` does **not** cover the webhook path (it is the only seam it skips, by design; webhook smoke needs a Stripe-signed payload). Confirm via SQL:
+- The `stripe listen` terminal shows a delivery succeeding with `200` from your endpoint.
+- A row in `public.audits` flips from `pending_payment` to `paid` (NOT `complete` -- those are different rows; `paid` is the webhook marker, the user-facing audit is still produced by a separate `/api/audit` call).
+
+Run the full preflight in mock mode to confirm the conversion pipeline in aggregate:
+
+```bash
+MOCK_EXTERNAL=1 node scripts/preflight-check.mjs --base https://stackauditor.com
+```
+
+The preflight now covers the webhook path (`pending_payment -> paid` flip + idempotency replay), so a green run is the strongest signal you can get short of a real card.
+
+For the prod checks that the preflight cannot run (signature verify on a real signed payload), confirm via SQL:
 
 ```sql
-select email, status, is_free, completed_at
+select email, status, is_free, stripe_event_id, stripe_session_id, paid_at
 from public.audits
-where email like 'smoke-%'
-order by completed_at desc
+where stripe_event_id is not null
+order by paid_at desc
 limit 5;
 ```
 
+The output should show `status = 'paid'` with a non-null `stripe_event_id` and `paid_at`.
+
 ### Rollback
 
-1. Delete `STRIPE_WEBHOOK_SECRET` from Vercel.
-2. The endpoint route still exists, but `constructEvent` throws on the missing signature verification returns 400 Stripe marks the delivery as failed and **retries** for up to 3 days. Disable the endpoint in the Stripe dashboard to stop the retries.
-3. Paid audits stay `pending`; the user can re-trigger via customer support. No double-billing.
+1. Delete `STRIPE_WEBHOOK_SECRET` from Vercel. The route returns 503 instead of 400, but either way Stripe counts it as a failed delivery and **retries** for up to 3 days.
+2. Disable the endpoint in the Stripe dashboard to stop the retries.
+3. Paid audits stay `pending_payment`; the user can re-trigger via the success page on next session. The idempotency table `processed_webhook_events` will keep duplicates from re-flipping once you re-enable.
+4. No code rollback needed: the route is correct, just unconfigured.
 
 ---
 
@@ -507,7 +553,9 @@ If any of 5.2 / 5.3 fails *after* you started sending traffic:
 | `/api/audit` returns `mocked: true` after Step 2 | `ANTHROPIC_API_KEY` not in scope | Vercel env scope; redeploy with cache cleared |
 | `/api/upload` 500s with Storage upload failed | Bucket name typo or service-role key wrong | `serviceClient().storage.listBuckets()`; verify bucket name is `audit-uploads` |
 | `/api/checkout` returns `stubbed: true` after Step 3 | Early-return in `route.ts` not removed | Read the file; the live block must be **un-commented**, not just present |
-| Webhook returns 400 immediately | `STRIPE_WEBHOOK_SECRET` mismatch | Re-copy from Stripe dashboard; secrets are scoped per endpoint |
+| Webhook returns 400 immediately | `STRIPE_WEBHOOK_SECRET` mismatch or signature header missing | Re-copy from Stripe dashboard; secrets are scoped per endpoint |
+| Webhook returns 503 (not 400) | `STRIPE_WEBHOOK_SECRET` or `STRIPE_SECRET_KEY` not set in Vercel env | Both are required for signature verification; set and redeploy |
+| Stripe-cli shows 500 from webhook | Idempotency insert or markAuditPaid threw | Check Vercel function logs for the thrown error; usually a Postgres issue (audit row not found) |
 | Spend spikes in Anthropic | Prompt not cached or rubric grew | Check `cache_read_input_tokens > 0`; if 0, the rubric changed and lost the `cache_control` marker |
 | `audits` row stuck on `pending` | Model call threw after row was created | `result: null` in DB; rerun `/api/audit` with same `uploadId` (free-gate uses the pending row, idempotent) |
 
